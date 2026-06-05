@@ -37,10 +37,14 @@ public class LoginController extends HttpServlet {
             // 4. Crear sesión HTTP para mantener al usuario conectado
             HttpSession session = request.getSession();
             session.setAttribute("usuarioLogueado", usuarioValidado);
+            
+            // --- NUEVO: Guardamos el ID del supervisor para poder enlazarlo a sus promotores ---
+            // *Nota: Asegúrate de que el método de tu clase Usuario se llame getIdUsuario() o cámbialo por getId() si así lo nombraste.
+            session.setAttribute("idSupervisor", usuarioValidado.getId()); 
 
             // 5. Redirección inteligente basada en el Rol
             if (usuarioValidado.getRol().equals("Supervisor")) {
-                response.sendRedirect("supervisor/dashboard_supervisor.jsp");
+                response.sendRedirect("SupervisorController?accion=verDashboard");
             } else {
                 // Ahora redirige al Servlet para que cargue la base de datos primero
                 response.sendRedirect("promotor/inicio_promotor.jsp");

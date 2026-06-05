@@ -8,17 +8,20 @@ public class Instituto {
     private String direccion;
     private String prioridad;
     private String estado;
+    private int idPromotorAsignado;
+    private String telefono;
+    private String correo;
+    private String provincia;
 
-    // Constructor vacío
     public Instituto() {}
 
     // Getters y Setters
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public int getIdInstituto() { return id; }
+    public void setIdInstituto(int id) { this.id = id; }
 
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
-
+    public String getNombreInstituto() { return nombre; }
+    public void setNombreInstituto(String nombre) { this.nombre = nombre; }
+    
     public String getTipo() { return tipo; }
     public void setTipo(String tipo) { this.tipo = tipo; }
 
@@ -33,4 +36,34 @@ public class Instituto {
 
     public String getEstado() { return estado; }
     public void setEstado(String estado) { this.estado = estado; }
+    
+    public int getIdPromotorAsignado() { return idPromotorAsignado; }
+    public void setIdPromotorAsignado(int idPromotorAsignado) { this.idPromotorAsignado = idPromotorAsignado; }
+    
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
+
+    public String getProvincia() {
+        return provincia;
+    }
+
+    public void setProvincia(String provincia) {
+        this.provincia = provincia;
+    }
+    
+
+    
 }

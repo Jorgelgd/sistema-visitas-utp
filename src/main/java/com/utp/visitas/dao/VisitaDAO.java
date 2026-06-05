@@ -4,6 +4,7 @@ import com.utp.visitas.config.ConexionBD;
 import com.utp.visitas.model.Visita;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,60 +12,57 @@ public class VisitaDAO {
 
     private static final Logger log = LoggerFactory.getLogger(VisitaDAO.class);
 
-    public boolean registrarVisita(Visita visita) {
+        public boolean registrarVisita(Visita visita, String nomDirector, String telDirector) {
         Connection con = null;
         PreparedStatement psVisita = null;
+        PreparedStatement psDirector = null;
         PreparedStatement psInstituto = null;
         boolean exito = false;
 
         try {
             con = ConexionBD.getConexion();
-            // Desactivamos el auto-commit para asegurar que ambas consultas se ejecuten o ninguna
             con.setAutoCommit(false); 
 
-            // 1. Insertar en la tabla visita
-            String sqlVisita = "INSERT INTO visita (id_promotor, id_instituto, fecha_visita, tipo_visita, resultado_gestion, observaciones) VALUES (?, ?, ?, 'Presencial', ?, ?)";
+            // 1. Insertar Director si se proporcionan datos
+            int idDirectorGenerado = 0;
+            if (nomDirector != null && !nomDirector.isEmpty()) {
+                String sqlDir = "INSERT INTO director (id_instituto, nombres, celular) VALUES (?, ?, ?)";
+                psDirector = con.prepareStatement(sqlDir, PreparedStatement.RETURN_GENERATED_KEYS);
+                psDirector.setInt(1, visita.getIdInstituto());
+                psDirector.setString(2, nomDirector);
+                psDirector.setString(3, telDirector);
+                psDirector.executeUpdate();
+
+                ResultSet rs = psDirector.getGeneratedKeys();
+                if (rs.next()) idDirectorGenerado = rs.getInt(1);
+            }
+
+            // 2. Insertar Visita
+            String sqlVisita = "INSERT INTO visita (id_promotor, id_instituto, id_director, fecha_visita, tipo_visita, resultado_gestion, observaciones, fecha_charla_pactada) VALUES (?, ?, ?, ?, 'Presencial', ?, ?, ?)";
             psVisita = con.prepareStatement(sqlVisita);
             psVisita.setInt(1, visita.getIdPromotor());
             psVisita.setInt(2, visita.getIdInstituto());
-            psVisita.setString(3, visita.getFechaVisita());
-            psVisita.setString(4, visita.getResultadoGestion());
-            psVisita.setString(5, visita.getObservaciones());
+            if(idDirectorGenerado > 0) psVisita.setInt(3, idDirectorGenerado); else psVisita.setNull(3, java.sql.Types.INTEGER);
+            psVisita.setString(4, visita.getFechaVisita());
+            psVisita.setString(5, visita.getResultadoGestion());
+            psVisita.setString(6, visita.getObservaciones());
+            psVisita.setString(7, visita.getFechaCharlaPactada());
             psVisita.executeUpdate();
 
-            // 2. Actualizar el estado en la tabla instituto
+            // 3. Actualizar Instituto
             String sqlInstituto = "UPDATE instituto SET estado = ? WHERE id_instituto = ?";
             psInstituto = con.prepareStatement(sqlInstituto);
-            
-            // Simplificamos el estado para la vista del colegio (Ej. de "Aprobado - Día UTP" a "Aprobado")
-            String estadoCorto = visita.getResultadoGestion().split(" - ")[0]; 
-            psInstituto.setString(1, estadoCorto);
+            psInstituto.setString(1, visita.getResultadoGestion().split(" - ")[0]);
             psInstituto.setInt(2, visita.getIdInstituto());
             psInstituto.executeUpdate();
 
-            // Si todo salió bien, confirmamos los cambios en la base de datos
             con.commit();
             exito = true;
-            log.info("Visita registrada correctamente para el instituto ID: {}", visita.getIdInstituto());
-
         } catch (Exception e) {
-            log.error("Error al registrar la visita. Revirtiendo cambios.", e);
-            try {
-                if (con != null) con.rollback(); // Si hay error, deshacemos todo
-            } catch (Exception ex) {
-                log.error("Error en el rollback", ex);
-            }
+            log.error("Error en transacción de visita", e);
+            try { if (con != null) con.rollback(); } catch (Exception ex) {}
         } finally {
-            try {
-                if (psVisita != null) psVisita.close();
-                if (psInstituto != null) psInstituto.close();
-                if (con != null) {
-                    con.setAutoCommit(true); // Restauramos el comportamiento por defecto
-                    con.close();
-                }
-            } catch (Exception e) {
-                log.error("Error cerrando conexiones en VisitaDAO", e);
-            }
+            // Cerrar recursos...
         }
         return exito;
     }

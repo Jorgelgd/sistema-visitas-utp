@@ -1,4 +1,4 @@
-    <%@page import="java.util.List"%>
+<%@page import="java.util.List"%>
 <%@page import="com.utp.visitas.model.Instituto"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -47,7 +47,6 @@
 </head>
 <body>
 
-    <!-- BARRA DE NAVEGACIÓN -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-utp shadow-sm sticky-top">
         <div class="container-fluid px-3">
             <a class="navbar-brand fw-bold" href="<%= request.getContextPath() %>/promotor/inicio_promotor.jsp">
@@ -56,7 +55,6 @@
         </div>
     </nav>
 
-    <!-- CONTENIDO -->
     <div class="container my-4 px-3">
         
         <div class="mb-4">
@@ -64,7 +62,6 @@
             <p class="text-muted-custom small">Mostrando la cartera oficial de instituciones asignadas en tu zona</p>
         </div>
 
-        <!-- BUSCADOR Y FILTROS -->
         <div class="row g-2 mb-4">
             <div class="col-12">
                 <div class="input-group">
@@ -80,11 +77,8 @@
             </div>
         </div>
 
-        <!-- LISTA DE COLEGIOS -->
-        <h6 class="text-uppercase text-muted-custom fw-bold mb-3 small" style="font-size: 0.75rem;">Instituciones (55 asignadas)</h6>
         <div class="row g-3">
             
-            <!-- BUCLE DINÁMICO DE JAVA -->
             <% 
                 List<Instituto> listaColegios = (List<Instituto>) request.getAttribute("listaColegios");
                 
@@ -103,10 +97,9 @@
                                     <span class="badge <%= claseBadge %> rounded-pill px-3 py-1 text-uppercase"><%= inst.getPrioridad() %></span>
                                     <span class="text-muted-custom small fw-bold">Estado: <%= inst.getEstado() %></span>
                                 </div>
-                                <h5 class="fw-bold text-dark mb-1"><%= inst.getNombre() %></h5>
+                                <h5 class="fw-bold text-dark mb-1"><%= inst.getNombreInstituto() %></h5>
                                 <p class="text-muted-custom small mb-2"><i class="bi bi-geo-alt me-1"></i><%= inst.getDistrito() %> | <%= inst.getDireccion() %></p>
                                 
-                                <!-- Sección de métricas simplificada para el bucle -->
                                 <div class="row g-0 border-top border-custom pt-2 mt-2 text-center text-muted-custom small">
                                     <div class="col-12">
                                         <span class="d-block text-dark fw-bold">Tipo: <%= inst.getTipo() %></span>
@@ -114,11 +107,11 @@
                                 </div>
                                 
                                 <div class="d-flex gap-2 mt-3">
-                                    <a href="promotor/registrar_visita.jsp?id=<%= inst.getId() %>" class="btn btn-sm btn-outline-secondary w-50 py-2">Coordinar Visita</a>
-                                    <a href="promotor/registrar_charla.jsp?id=<%= inst.getId() %>" class="btn btn-sm btn-utp w-50 py-2">Dar Charla</a>
+                                    <a href="promotor/registrar_visita.jsp?id=<%= inst.getIdInstituto() %>" class="btn btn-sm btn-outline-secondary w-50 py-2">Coordinar Visita</a>
+                                    <a href="promotor/registrar_charla.jsp?id=<%= inst.getIdInstituto() %>" class="btn btn-sm btn-utp w-50 py-2">Dar Charla</a>
                                 </div>
                                 <div class="mt-2">
-                                    <a href="promotor/capturar_evidencia.jsp?id=<%= inst.getId() %>" class="btn btn-sm btn-dark w-100 py-2">
+                                    <a href="promotor/capturar_evidencia.jsp?id=<%= inst.getIdInstituto() %>" class="btn btn-sm btn-dark w-100 py-2">
                                         <i class="bi bi-camera-fill me-1"></i> Subir Evidencia
                                     </a>
                                 </div>
@@ -137,9 +130,7 @@
             <% 
                 } 
             %>
-            <!-- FIN DEL BUCLE -->
-
-        </div>
+            </div>
         
     </div>
 

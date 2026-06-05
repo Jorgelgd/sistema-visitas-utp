@@ -1,4 +1,6 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="java.util.List" %>
+<%@ page import="com.utp.visitas.model.ReporteConsolidado" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -31,19 +33,17 @@
             font-weight: 600;
         }
         .main-content { width: 100%; min-height: 100vh; }
-        .card-report {
+        .table-container {
             background-color: #ffffff;
             border: 1px solid #E0E4EC;
             border-radius: 12px;
+            overflow: hidden;
         }
-        .btn-utp {
-            background-color: #8B1D2F;
-            color: white;
-            border: none;
-        }
-        .btn-utp:hover {
-            background-color: #A3263A;
-            color: white;
+        .progress-custom {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #E0E4EC;
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -57,20 +57,33 @@
         </div>
         <ul class="nav flex-column mt-4 flex-grow-1">
             <li class="nav-item">
-                <a class="nav-link" href="dashboard_supervisor.jsp"><i class="bi bi-speedometer2 me-3"></i>Dashboard Control</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/SupervisorController?accion=verDashboard">
+                    <i class="bi bi-speedometer2 me-3"></i>Dashboard Control
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="control_geolocalizacion.jsp"><i class="bi bi-map me-3"></i>Monitoreo GPS</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/SupervisorController?accion=verMonitoreoGPS">
+                    <i class="bi bi-map me-3"></i>Monitoreo GPS
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="gestion_usuarios.jsp"><i class="bi bi-people me-3"></i>Gestión de Personal</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/SupervisorController?accion=verPersonal">
+                    <i class="bi bi-people me-3"></i>Gestión de Personal
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" href="#"><i class="bi bi-bar-chart-line me-3"></i>Reportes de Metas</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/SupervisorController?accion=verColegios">
+                    <i class="fas fa-school"></i> Gestión de Instituciones
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="${pageContext.request.contextPath}/SupervisorController?accion=verReportes">
+                    <i class="bi bi-bar-chart-line me-3"></i>Reportes de Metas
+                </a>
             </li>
         </ul>
         <div class="p-3 border-top border-white border-opacity-10 text-center">
-            <a href="../login.html" class="btn btn-sm btn-outline-light w-100 py-2 rounded-pill"><i class="bi bi-box-arrow-left me-2"></i>Cerrar Sesión</a>
+            <a href="${pageContext.request.contextPath}/login.html" class="btn btn-sm btn-outline-light w-100 py-2 rounded-pill"><i class="bi bi-box-arrow-left me-2"></i>Cerrar Sesión</a>
         </div>
     </div>
 
@@ -78,119 +91,75 @@
     <div class="main-content d-flex flex-column">
         <nav class="navbar navbar-expand navbar-light bg-white border-bottom px-4 shadow-sm sticky-top">
             <span class="navbar-brand mb-0 h5 fw-bold d-md-none text-danger">UTP Reportes</span>
-            <div class="ms-auto">
-                <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-download me-2"></i>Exportar Excel</button>
-            </div>
         </nav>
 
         <div class="container-fluid p-4">
             <div class="mb-4">
-                <h3 class="fw-bold mb-1 text-dark">Rendimiento y Metas de Prospección</h3>
-                <p class="text-muted mb-0 small">Consolidado estadístico del avance de captación sobre la población objetivo nacional (4,500 alumnos)</p>
+                <h3 class="fw-bold mb-1 text-dark">Consolidado de Metas por Promotor</h3>
+                <p class="text-muted mb-0 small">Métricas de avance y cumplimiento del despliegue logístico asignado a cada trabajador.</p>
             </div>
 
-            <!-- SECCIÓN DE GRÁFICOS Y MÉTRICAS POR FILTRO -->
-            <div class="row g-4 mb-4">
+            <!-- TABLA DE RENDIMIENTO -->
+            <div class="table-container shadow-sm p-4">
+                <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+                    <h5 class="fw-bold text-dark mb-0"><i class="bi bi-graph-up-arrow me-2 text-danger"></i> Rendimiento de Cartera de Colegios</h5>
+                    <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-download me-1"></i> Exportar a Excel</button>
+                </div>
                 
-                <!-- Progreso por Zona Geográfica (Simulación de Barras) -->
-                <div class="col-xl-6 col-12">
-                    <div class="card-report p-4 shadow-sm h-100">
-                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-pie-chart me-2 text-danger"></i> Avance de Cobertura por Zonas</h5>
-                        
-                        <div class="mb-4">
-                            <div class="d-flex justify-content-between mb-1 small fw-bold">
-                                <span>Lima Sur (Meta: 1,800 alumnos)</span>
-                                <span class="text-danger">85%</span>
-                            </div>
-                            <div class="progress" style="height: 12px;">
-                                <div class="progress-bar" role="progressbar" style="width: 85%; background-color: #8B1D2F;" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </div>
-
-                        <div class="mb-4">
-                            <div class="d-flex justify-content-between mb-1 small fw-bold">
-                                <span>Lima Centro (Meta: 1,500 alumnos)</span>
-                                <span class="text-primary">70%</span>
-                            </div>
-                            <div class="progress" style="height: 12px;">
-                                <div class="progress-bar bg-primary" role="progressbar" style="width: 70%;" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </div>
-
-                        <div class="mb-2">
-                            <div class="d-flex justify-content-between mb-1 small fw-bold">
-                                <span>Lima Norte (Meta: 1,200 alumnos)</span>
-                                <span class="text-success">92%</span>
-                            </div>
-                            <div class="progress" style="height: 12px;">
-                                <div class="progress-bar bg-success" role="progressbar" style="width: 92%;" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Resumen de Efectividad de Charlas por Prioridad de Colegio -->
-                <div class="col-xl-6 col-12">
-                    <div class="card-report p-4 shadow-sm h-100">
-                        <h5 class="fw-bold text-dark mb-3"><i class="bi bi-building-up me-2 text-danger"></i> Efectividad por Prioridad de Colegio</h5>
-                        <div class="row text-center mt-3 g-2">
-                            <div class="col-4">
-                                <div class="p-3 bg-warning bg-opacity-10 rounded-3 border border-warning border-opacity-25">
-                                    <span class="d-block text-muted small fw-bold">Colegios TOP</span>
-                                    <h3 class="fw-bold text-dark mt-2 mb-0">94%</h3>
-                                    <small class="text-success extra-small"><i class="bi bi-arrow-up-short"></i>Alta Conversión</small>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="p-3 bg-primary bg-opacity-10 rounded-3 border border-primary border-opacity-25">
-                                    <span class="d-block text-muted small fw-bold">Prioridad P1</span>
-                                    <h3 class="fw-bold text-dark mt-2 mb-0">78%</h3>
-                                    <small class="text-muted extra-small">Estable</small>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="p-3 bg-secondary bg-opacity-10 rounded-3 border border-secondary border-opacity-25">
-                                    <span class="d-block text-muted small fw-bold">Prioridad P2</span>
-                                    <h3 class="fw-bold text-dark mt-2 mb-0">45%</h3>
-                                    <small class="text-danger extra-small"><i class="bi bi-dash-circle"></i>Única Visita</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- RANKING DE TRABAJO EN CAMPO POR PROMOTOR -->
-            <div class="card-report p-4 shadow-sm">
-                <h5 class="fw-bold text-dark mb-3"><i class="bi bi-trophy me-2 text-danger"></i> Historial de Productividad Individual de Promotores</h5>
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0 text-center">
+                    <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr class="small text-uppercase fw-bold text-muted">
-                                <th class="text-start">Promotor</th>
-                                <th>Charlas Dictadas</th>
-                                <th>Fichas Capturadas</th>
-                                <th>Efectividad de Prospección</th>
+                                <th>Nombres y Apellidos</th>
+                                <th class="text-center">Meta Asignada</th>
+                                <th class="text-center">Colegios Auditados</th>
+                                <th>Nivel de Avance</th>
                             </tr>
                         </thead>
                         <tbody class="small">
-                            <tr>
-                                <td class="fw-bold text-dark text-start">Alexander Carrero</td>
-                                <td>34 aulas</td>
-                                <td class="fw-bold text-danger">850 fichas</td>
-                                <td><span class="badge bg-success bg-opacity-10 text-success px-3 py-1 rounded-pill">91% (Óptimo)</span></td>
-                            </tr>
-                            <tr>
-                                <td class="fw-bold text-dark text-start">Milagros Torres</td>
-                                <td>28 aulas</td>
-                                <td class="fw-bold text-danger">620 fichas</td>
-                                <td><span class="badge bg-primary bg-opacity-10 text-primary px-3 py-1 rounded-pill">84% (Estable)</span></td>
-                            </tr>
+                            <%
+                                List<ReporteConsolidado> listaReportes = (List<ReporteConsolidado>) request.getAttribute("listaReportes");
+                                if (listaReportes != null && !listaReportes.isEmpty()) {
+                                    for (ReporteConsolidado rep : listaReportes) {
+                                        // Determinar el color de la barra según el avance
+                                        String colorBarra = "bg-danger"; // Menos de 30%
+                                        if (rep.getPorcentajeAvance() >= 80.0) {
+                                            colorBarra = "bg-success";
+                                        } else if (rep.getPorcentajeAvance() >= 40.0) {
+                                            colorBarra = "bg-warning";
+                                        }
+                            %>
+                                <tr>
+                                    <td class="fw-bold text-dark"><i class="bi bi-person-badge text-secondary me-2"></i><%= rep.getNombrePromotor() %></td>
+                                    <td class="text-center"><span class="badge bg-light text-dark border px-3"><%= rep.getMetaColegios() %> Colegios</span></td>
+                                    <td class="text-center fw-bold text-primary"><%= rep.getColegiosVisitados() %></td>
+                                    <td style="min-width: 200px;">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <span class="text-muted" style="font-size: 0.75rem;">Progreso</span>
+                                            <span class="fw-bold <%= colorBarra.replace("bg-", "text-") %>"><%= rep.getPorcentajeAvance() %>%</span>
+                                        </div>
+                                        <div class="progress progress-custom">
+                                            <div class="progress-bar <%= colorBarra %>" role="progressbar" style="width: <%= rep.getPorcentajeAvance() %>%;" aria-valuenow="<%= rep.getPorcentajeAvance() %>" aria-valuemin="0" aria-valuemax="100"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <%
+                                    }
+                                } else {
+                            %>
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted py-4">
+                                        <i class="bi bi-file-earmark-bar-graph fs-3 d-block mb-2"></i>
+                                        Aún no hay promotores con colegios asignados para mostrar el reporte.
+                                    </td>
+                                </tr>
+                            <%
+                                }
+                            %>
                         </tbody>
                     </table>
                 </div>
             </div>
-
         </div>
     </div>
 

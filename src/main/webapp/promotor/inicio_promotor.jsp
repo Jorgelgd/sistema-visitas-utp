@@ -45,22 +45,19 @@
 </head>
 <body>
 
-    <!-- BARRA DE NAVEGACIÓN RESPONSIVA -->
     <nav class="navbar navbar-dark navbar-utp shadow-sm sticky-top">
         <div class="container-fluid px-3 d-flex justify-content-between align-items-center">
             <span class="navbar-brand fw-bold mb-0 h1">UTP Promotor</span>
             
-            <a href="../login.html" class="btn btn-sm btn-outline-light d-flex align-items-center gap-2">
+            <a href="<%= request.getContextPath() %>/login.html" class="btn btn-sm btn-outline-light d-flex align-items-center gap-2">
                 <span>Cerrar Sesión</span>
                 <i class="bi bi-box-arrow-right"></i>
             </a>
         </div>
     </nav>
 
-    <!-- CONTENIDO PRINCIPAL -->
     <div class="container my-4 px-3">
         
-        <!-- Saludo e Identificación -->
         <div class="row mb-4 align-items-center">
             <div class="col">
                 <h4 class="mb-1 fw-bold text-truncate">Hola, Alexander Carrero</h4>
@@ -71,7 +68,6 @@
             </div>
         </div>
 
-        <!-- INDICADORES CLAVE -->
         <h6 class="text-uppercase text-muted-custom fw-bold mb-3 small" style="font-size: 0.75rem;letter-spacing: 0.05em;">Resumen de Hoy</h6>
         <%
             // Capturamos los datos enviados por el PromotorController (ponemos 0 si vienen vacíos)
@@ -117,12 +113,11 @@
             
         </div> 
 
-        <!-- OPERACIONES DE RUTA -->
         <h6 class="text-uppercase text-muted-custom fw-bold mb-3 mt-5 small" style="font-size: 0.75rem;">Operaciones de Ruta</h6>
         <div class="row g-3">
             
             <div class="col-12">
-                <a href="lista_instituciones.jsp" class="card-menu p-3 d-flex align-items-center text-decoration-none shadow-sm">
+                <a href="<%= request.getContextPath() %>/PromotorController?accion=listarColegios" class="card-menu p-3 d-flex align-items-center text-decoration-none shadow-sm">
                     <div class="bg-danger bg-opacity-10 p-3 rounded-3 text-danger me-3 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
                         <i class="bi bi-journal-bookmark fs-4"></i>
                     </div>

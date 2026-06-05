@@ -1,3 +1,5 @@
+<%@page import="com.utp.visitas.model.MonitoreoCampo"%>
+<%@page import="java.util.List"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="es">
@@ -60,20 +62,33 @@
         </div>
         <ul class="nav flex-column mt-4 flex-grow-1">
             <li class="nav-item">
-                <a class="nav-link active" href="#"><i class="bi bi-speedometer2 me-3"></i>Dashboard Control</a>
+                <a class="nav-link active" href="${pageContext.request.contextPath}/SupervisorController?accion=verDashboard">
+                    <i class="bi bi-speedometer2 me-3"></i>Dashboard Control
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="control_geolocalizacion.jsp"><i class="bi bi-map me-3"></i>Monitoreo GPS</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/SupervisorController?accion=verMonitoreoGPS">
+                    <i class="bi bi-map me-3"></i>Monitoreo GPS
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="gestion_usuarios.jsp"><i class="bi bi-people me-3"></i>Gestión de Personal</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/SupervisorController?accion=verPersonal">
+                    <i class="bi bi-people me-3"></i>Gestión de Personal
+                </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="reportes_consolidado.jsp"><i class="bi bi-bar-chart-line me-3"></i>Reportes de Metas</a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/SupervisorController?accion=verColegios">
+                    <i class="fas fa-school"></i> Gestión de Instituciones
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="${pageContext.request.contextPath}/SupervisorController?accion=verReportes">
+                    <i class="bi bi-bar-chart-line me-3"></i>Reportes de Metas
+                </a>
             </li>
         </ul>
         <div class="p-3 border-top border-white border-opacity-10 text-center">
-            <a href="../login.html" class="btn btn-sm btn-outline-light w-100 py-2 rounded-pill"><i class="bi bi-box-arrow-left me-2"></i>Cerrar Sesión</a>
+            <a href="${pageContext.request.contextPath}/login.html" class="btn btn-sm btn-outline-light w-100 py-2 rounded-pill"><i class="bi bi-box-arrow-left me-2"></i>Cerrar Sesión</a>
         </div>
     </div>
 
@@ -102,52 +117,52 @@
                 </div>
             </div>
 
+            <%
+                // Capturamos los datos enviados por el SupervisorController
+                int personalActivo = request.getAttribute("personalActivo") != null ? (Integer) request.getAttribute("personalActivo") : 0;
+                int totalPromotores = request.getAttribute("totalPromotores") != null ? (Integer) request.getAttribute("totalPromotores") : 15;
+                int totalColegios = request.getAttribute("totalColegios") != null ? (Integer) request.getAttribute("totalColegios") : 0;
+                int alertasActivas = request.getAttribute("alertasActivas") != null ? (Integer) request.getAttribute("alertasActivas") : 0;
+                String porcentajeMeta = request.getAttribute("porcentajeMeta") != null ? (String) request.getAttribute("porcentajeMeta") : "0.0";
+            %>
             <!-- TARJETAS DE INDICADORES / ALERTAS DEL SUPERVISOR -->
             <div class="row g-3 mb-4">
                 
-                <!-- Promotores Desplegados -->
-                <div class="col-12 col-sm-6 col-xl-3">
-                    <div class="card-dash p-3 shadow-sm d-flex align-items-center">
-                        <div class="p-3 bg-danger bg-opacity-10 text-danger rounded-3 me-3"><i class="bi bi-person-walking fs-3"></i></div>
-                        <div>
-                            <div class="text-muted small fw-bold">Personal Activo</div>
-                            <h3 class="fw-bold mb-0 text-dark">14 / 15</h3>
-                        </div>
-                    </div>
+                <!-- TARJETA 1: Personal Activo -->
+            <div class="col-md-3">
+                <div class="card p-3 shadow-sm border-0 h-100">
+                    <div class="text-muted small">Personal Activo</div>
+                    <!-- Reemplazamos el "14 / 15" -->
+                    <h2 class="fw-bold mt-2 mb-0"><%= personalActivo %> / <%= totalPromotores %></h2>
                 </div>
+            </div>
 
-                <!-- Visitas Realizadas -->
-                <div class="col-12 col-sm-6 col-xl-3">
-                    <div class="card-dash p-3 shadow-sm d-flex align-items-center">
-                        <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-3 me-3"><i class="bi bi-building-check fs-3"></i></div>
-                        <div>
-                            <div class="text-muted small fw-bold">Colegios Auditados</div>
-                            <h3 class="fw-bold mb-0 text-dark">128</h3>
-                        </div>
-                    </div>
+            <!-- TARJETA 2: Colegios Auditados -->
+            <div class="col-md-3">
+                <div class="card p-3 shadow-sm border-0 h-100">
+                    <div class="text-muted small">Colegios Auditados</div>
+                    <!-- Reemplazamos el "128" -->
+                    <h2 class="fw-bold mt-2 mb-0"><%= totalColegios %></h2>
                 </div>
+            </div>
 
-                <!-- Alertas Logísticas (Disparador del Negocio) -->
-                <div class="col-12 col-sm-6 col-xl-3">
-                    <div class="card-dash p-3 shadow-sm d-flex align-items-center border border-danger border-opacity-50">
-                        <div class="p-3 bg-danger bg-opacity-10 text-danger rounded-3 me-3"><i class="bi bi-envelope-exclamation-fill fs-3"></i></div>
-                        <div>
-                            <div class="text-muted small fw-bold text-danger">Alertas por Correo</div>
-                            <h3 class="fw-bold mb-0 text-danger">3 Activas</h3>
-                        </div>
-                    </div>
+            <!-- TARJETA 3: Alertas por Correo -->
+            <div class="col-md-3">
+                <div class="card p-3 shadow-sm border-0 h-100 border-danger border-start border-4">
+                    <div class="text-muted small">Alertas por Correo</div>
+                    <!-- Reemplazamos el "3 Activas" -->
+                    <h2 class="fw-bold text-danger mt-2 mb-0"><%= alertasActivas %> Activas</h2>
                 </div>
+            </div>
 
-                <!-- Cobertura Global (Población de 4.5k objetivo) -->
-                <div class="col-12 col-sm-6 col-xl-3">
-                    <div class="card-dash p-3 shadow-sm d-flex align-items-center">
-                        <div class="p-3 bg-success bg-opacity-10 text-success rounded-3 me-3"><i class="bi bi-check2-circle fs-3"></i></div>
-                        <div>
-                            <div class="text-muted small fw-bold">Meta Consolidada</div>
-                            <h3 class="fw-bold mb-0 text-success">82.4%</h3>
-                        </div>
-                    </div>
+            <!-- TARJETA 4: Meta Consolidada -->
+            <div class="col-md-3">
+                <div class="card p-3 shadow-sm border-0 h-100 border-success border-start border-4">
+                    <div class="text-muted small">Meta Consolidada</div>
+                    <!-- Reemplazamos el "82.4%" -->
+                    <h2 class="fw-bold text-success mt-2 mb-0"><%= porcentajeMeta %>%</h2>
                 </div>
+            </div>
 
             </div>
 
@@ -169,31 +184,47 @@
                                 <th class="text-end">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody class="small">
-                            <tr>
-                                <td class="fw-bold text-dark">Alexander Carrero</td>
-                                <td>Perú Estados Unidos - VES</td>
-                                <td>11:45 AM</td>
-                                <td><span class="badge bg-warning text-dark px-2 rounded">TOP</span></td>
-                                <td><span class="text-success"><i class="bi bi-image me-1"></i>Foto Cargada</span></td>
-                                <td class="text-end"><a href="control_geolocalizacion.jsp" class="btn btn-sm btn-outline-danger px-3 py-1 rounded-pill">Auditar GPS</a></td>
-                            </tr>
-                            <tr>
-                                <td class="fw-bold text-dark">Milagros Torres</td>
-                                <td>Reino Unido Británico - VES</td>
-                                <td>10:15 AM</td>
-                                <td><span class="badge bg-primary px-2 rounded text-white">P1</span></td>
-                                <td><span class="text-success"><i class="bi bi-image me-1"></i>Foto Cargada</span></td>
-                                <td class="text-end"><a href="control_geolocalizacion.jsp" class="btn btn-sm btn-outline-danger px-3 py-1 rounded-pill">Auditar GPS</a></td>
-                            </tr>
-                            <tr>
-                                <td class="fw-bold text-dark">Christian Palomino</td>
-                                <td>Ramiro Prialé Prialé - SJM</td>
-                                <td>09:30 AM</td>
-                                <td><span class="badge bg-secondary px-2 rounded text-white">P2</span></td>
-                                <td><span class="text-danger fw-bold"><i class="bi bi-exclamation-triangle me-1"></i>Sin Evidencia</span></td>
-                                <td class="text-end"><a href="control_geolocalizacion.jsp" class="btn btn-sm btn-outline-danger px-3 py-1 rounded-pill">Auditar GPS</a></td>
-                            </tr>
+                        <tbody class="small align-middle">
+                            <%
+                                List<MonitoreoCampo> listaVisitas = (List<MonitoreoCampo>) request.getAttribute("ultimasVisitas");
+
+                                if (listaVisitas != null && !listaVisitas.isEmpty()) {
+                                    for (MonitoreoCampo visita : listaVisitas) {
+                                        // Lógica de colores para la prioridad
+                                        String badgeColor = "bg-secondary"; // Por defecto P2
+                                        if ("TOP".equals(visita.getPrioridad())) badgeColor = "bg-warning text-dark";
+                                        else if ("P1".equals(visita.getPrioridad())) badgeColor = "bg-primary";
+                            %>
+                                <tr>
+                                    <td class="fw-bold text-dark"><%= visita.getNombrePromotor() %></td>
+                                    <td><%= visita.getColegioVisitado() %></td>
+                                    <td>12:00 PM</td> <td><span class="badge <%= badgeColor %>"><%= visita.getPrioridad() %></span></td>
+
+                                    <td>
+                                        <% if (visita.isTieneEvidencia()) { %>
+                                            <span class="text-success"><i class="bi bi-image me-1"></i>Foto Cargada</span>
+                                        <% } else { %>
+                                            <span class="text-danger fw-bold"><i class="bi bi-exclamation-triangle me-1"></i>Sin Evidencia</span>
+                                        <% } %>
+                                    </td>
+
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-danger rounded-pill px-3">Auditar GPS</button>
+                                    </td>
+                                </tr>
+                            <%
+                                    }
+                                } else {
+                            %>
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-4">
+                                        <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                                        No hay visitas registradas el día de hoy.
+                                    </td>
+                                </tr>
+                            <%
+                                }
+                            %>
                         </tbody>
                     </table>
                 </div>
